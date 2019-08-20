@@ -6,6 +6,7 @@
 #include "convert.h"
 #include <QtCore>
 #include <QAbstractItemView>
+#include  <QSplitter>
 
 serial_tool::serial_tool(QWidget *parent) :
     QWidget(parent),
@@ -23,6 +24,12 @@ serial_tool::serial_tool(QWidget *parent) :
     connect(led_timer,SIGNAL(timeout()),this,SLOT(led_timer_irq()));
     led_timer->start(1);// 启动定时器 1ms
 
+
+    QSplitter *splitter = new QSplitter(Qt::Vertical, this);   //创建上下分割的对象
+   // splitter->setOpaqueResize(true);
+    ui->groupBoxRecv->setParent(splitter);  //设置textEdit的父容器为QSplitter， textEdit在布局页面拖拽生成，
+    ui->tab_send->setParent(splitter); //设置tabWidget的父容器为QSplitter，tabWidget在布局页面拖拽生成，
+    ui->horizontalLayout_6->addWidget(splitter);
 }
 
 serial_tool::~serial_tool()
@@ -232,12 +239,9 @@ QSerialPort::Parity serial_tool::to_convert_paritybit(QString  bit)
 
 void serial_tool::on_btn_open_port_clicked()
 {
-    QString ComName ;
+    QString ComName = ui->cbx_com_name->currentText().mid(0,ui->cbx_com_name->currentText().indexOf(' '));;
     if (ui->btn_open_port->text() == QObject::tr("打开串口"))
      {
-
-        ComName = ui->cbx_com_name->currentText().mid(0,ui->cbx_com_name->currentText().indexOf(' '));
-
         serialPort->setPortName(ComName);
 
         if(serialPort->open(QIODevice::ReadWrite))
@@ -276,7 +280,7 @@ void serial_tool::on_btn_open_port_clicked()
          ui->cbx_paritybit->setEnabled(true);
          ui->cbx_com_name->setEnabled(true);
          ui->btn_find_seriaport->setEnabled(true);
-          setstatemsg("color:red;",u8" 串口"+ui->cbx_com_name->currentText()+u8"关闭");
+          setstatemsg("color:red;",u8" 串口"+ComName+u8"关闭");
      }
 }
 void serial_tool::Find_SerialPort()
@@ -292,12 +296,11 @@ void serial_tool::Find_SerialPort()
         serial.setPort(info);
         if(serial.open(QIODevice::ReadWrite))
         {
-           ui->cbx_com_name->addItem(info.portName()+"          "+info.description());
+           ui->cbx_com_name->addItem(info.portName()+"              "+info.description());
            serial.close();
         }
     }
     find_led_timer = 200;
-
     int max_len=0;
     for(int idx=0;idx < ui->cbx_com_name->count();idx++)
     {
