@@ -40,7 +40,7 @@ Form::Form(QWidget *parent) :
     ui->frameMenu->resize(this->geometry().width(), ui->frameMenu->height());
     //ui->frameMenu->setFrameStyle();
     QMenuBar *pMenuBar = new QMenuBar(ui->frameMenu);
-    QMenu *pMenuBarFile= new QMenu(QStringLiteral("菜单"),this);
+    QMenu *pMenuBarFile= new QMenu(QStringLiteral("文件"),this);
 
 
     QAction *pActionOpen = new QAction(QStringLiteral("打开"), this);
